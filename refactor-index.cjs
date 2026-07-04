@@ -11,8 +11,10 @@ html = html.replace(/<!doctype html>/i, "<!DOCTYPE html>");
 
 html = html.replace(
   /<title>Cepheus Stdio\.?<\/title>/,
-  "<title>Prime Exits | Sell Your Amazon FBA Business</title>",
+  "<title>CePheus Stdio | </title>",
 );
+
+
 
 html = html.replace(
   /<meta http-equiv="Content-Type" content="text\/html; charset=UTF-8" \/>\r?\n/g,
@@ -35,8 +37,8 @@ html = html.replace(
   '<meta name="viewport" content="width=device-width, initial-scale=1" />',
 );
 html = html.replace(
-  '<meta property="og:url" content="https://prime-exits.com" />',
-  '<meta property="og:url" content="https://prime-exits.com/" />\n    <link rel="canonical" href="https://prime-exits.com/" />',
+  '<meta property="og:url" content="" />',
+  '<meta property="og:url" content="" />\n    <link rel="canonical" href="https://prime-exits.com/" />',
 );
 
 html = html.replace(
