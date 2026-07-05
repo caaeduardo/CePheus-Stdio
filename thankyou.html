@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <title>CePheus Stdio. | Obrigado</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="css/main.min.css" rel="stylesheet">
+  <link rel="shortcut icon" href="images/logo-CePheus.png" type="image/x-icon">
+  <link rel="apple-touch-icon" href="images/logo-CePheus.png">
+  <meta name="description" content="Cepheus Stdio. - Obrigado pelo contato">
+  <meta property="og:title" content="Cepheus Stdio.">
+  <meta property="og:description" content="Cepheus Stdio. - Obrigado pelo contato">
+  <meta name="keywords" content="Cepheus Stdio., Construindo Identidades, Landing Page, Sites, Clientes">
+  <meta name="twitter:description" content="Cepheus Stdio. - Obrigado pelo contato">
+  <meta property="og:site_name" content="Cepheus Stdio.">
+  <meta name="twitter:title" content="Cepheus Stdio.">
+  <meta property="og:url" content="thankyou.html">
+  <link rel="canonical" href="thankyou.html">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/logo-CePheus.png">
+  <meta property="og:image:secure_url" content="images/logo-CePheus.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image:src" content="images/logo-CePheus.png">
+  <meta name="twitter:image:width" content="1200">
+  <meta name="twitter:image:height" content="680">
+  <style>
+    .thankyou-page,
+    .thankyou-page .wrapper-main,
+    .thankyou-page .main,
+    .thankyou-page .first {
+      background-color: #081326;
+      min-height: 100vh;
+    }
+
+    .thankyou-page .main,
+    .thankyou-page .first {
+      position: relative;
+    }
+
+    .thankyou-page .first {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .thankyou-page .header,
+    .thankyou-page .first-center,
+    .thankyou-page .first-center-container,
+    .thankyou-page .title-main,
+    .thankyou-page .first-info,
+    .thankyou-page .first-bottom,
+    .thankyou-page .button,
+    .thankyou-page .first-scroll,
+    .thankyou-page .desc {
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+    }
+
+    .thankyou-page .header,
+    .thankyou-page .first-center,
+    .thankyou-page .first-bottom {
+      z-index: 2;
+    }
+
+    .thankyou-page .header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 2rem var(--container-spacer) 0;
+    }
+
+    .thankyou-page .logo img {
+      display: block;
+      width: min(160px, 40vw);
+      height: auto;
+      max-width: 100%;
+    }
+
+    .thankyou-page .first-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .thankyou-page .title-main {
+      max-width: 10ch;
+      font-size: clamp(3rem, 7vw, 6rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    .thankyou-page .first-center-container,
+    .thankyou-page .first-info {
+      max-width: 40rem;
+    }
+
+    .thankyou-page .first-center-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+      width: min(40rem, calc(100vw - (var(--container-spacer) * 2))) !important;
+      padding: 8rem var(--container-spacer) 3rem;
+    }
+
+    .thankyou-page .first-info {
+      width: min(34rem, 100%) !important;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2rem;
+    }
+
+    .thankyou-page .desc {
+      display: block !important;
+      width: min(34rem, 100%) !important;
+      max-width: none;
+      font-size: 1.125rem;
+      line-height: 1.6;
+    }
+
+    .thankyou-page .button,
+    .thankyou-page .first-scroll {
+      text-decoration: none;
+    }
+
+    .thankyou-page .button {
+      display: inline-flex !important;
+    }
+
+    .thankyou-page .first-bottom {
+      padding: 0 var(--container-spacer) 2rem;
+      flex-wrap: wrap;
+      row-gap: 1rem;
+    }
+
+    .thankyou-page .first-video-wrapper {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: #081326 url("images/Abstract-background-_1_.jpg") center center / cover no-repeat;
+    }
+
+    .thankyou-page .first-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thankyou-page .preloader {
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .thankyou-page .preloader.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    @media screen and (max-width: 767px) {
+      .thankyou-page .header {
+        padding-top: 1.5rem;
+      }
+
+      .thankyou-page .first-center {
+        align-items: flex-start;
+      }
+
+      .thankyou-page .first-center-container,
+      .thankyou-page .first-info,
+      .thankyou-page .desc {
+        max-width: 100%;
+      }
+
+      .thankyou-page .first-center-container {
+        width: 100% !important;
+        padding-top: 7.5rem;
+        padding-bottom: 2rem;
+      }
+
+      .thankyou-page .title-main {
+        max-width: none;
+      }
+
+      .thankyou-page .first-bottom {
+        gap: 1rem;
+        padding-bottom: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="thankyou-page">
+  <div class="wrapper wrapper-main">
+    <div class="preloader">
+      <div class="preloader-content">
+        <img class="preloader-logo" src="images/logo-CePheus.png" alt="Cepheus Stdio">
+        <div class="preloader-text">Cepheus Stdio.</div>
+      </div>
+      <div class="preloader-bg">
+        <div class="preloader-line preloader-line-mob"></div>
+        <div class="preloader-line preloader-line-mob"></div>
+        <div class="preloader-line preloader-line-mob"></div>
+        <div class="preloader-line"></div>
+        <div class="preloader-line"></div>
+      </div>
+    </div>
+    <main class="main">
+      <header class="header">
+        <a href="index.html#first" class="logo" aria-label="Voltar para a página inicial da CePheus Stdio">
+          <img src="images/logo-CePheus.png" alt="CePheus Stdio">
+        </a>
+      </header>
+      <section class="first" id="first">
+        <div class="first-center">
+          <div class="first-center-container">
+            <h1 class="title-main">Obrigado</h1>
+            <div class="first-info">
+              <p class="desc">
+                Recebemos sua mensagem com sucesso. Em breve, a equipe da CePheus Stdio entrará em contato.
+              </p>
+              <a href="index.html#first" class="button" aria-label="Voltar ao site principal">
+                <span>Voltar ao site</span>
+                <svg class="arrow" viewBox="0 0 16 16">
+                  <path d="M8.66657 11.0568L12.6666 7.05681L13.6094 7.99962L8.4713 13.1377L7.52849 13.1377L2.39042 7.99962L3.33323 7.05681L7.33323 11.0568L7.33323 2.66629L8.66657 2.66629L8.66657 11.0568Z"></path>
+                  <path d="M8.66657 11.0568L12.6666 7.05681L13.6094 7.99962L8.4713 13.1377L7.52849 13.1377L2.39042 7.99962L3.33323 7.05681L7.33323 11.0568L7.33323 2.66629L8.66657 2.66629L8.66657 11.0568Z"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="first-bottom" aria-label="Informações adicionais da página">
+          <div class="first-time"><span class="time">00:00 - São Paulo, Brasil</span></div>
+          <div class="first-scroll-wrapper">
+            <a href="index.html#first" class="first-scroll" aria-label="Voltar para a página inicial">
+              <span>Página inicial</span>
+              <svg class="arrow" viewBox="0 0 16 16">
+                <path d="M8.66657 11.0568L12.6666 7.05681L13.6094 7.99962L8.4713 13.1377L7.52849 13.1377L2.39042 7.99962L3.33323 7.05681L7.33323 11.0568L7.33323 2.66629L8.66657 2.66629L8.66657 11.0568Z"></path>
+                <path d="M8.66657 11.0568L12.6666 7.05681L13.6094 7.99962L8.4713 13.1377L7.52849 13.1377L2.39042 7.99962L3.33323 7.05681L7.33323 11.0568L7.33323 2.66629L8.66657 2.66629L8.66657 11.0568Z"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="first-video-wrapper">
+          <video class="first-video" playsinline loop muted autoplay preload="metadata" poster="images/Abstract-background-_1_.jpg" aria-hidden="true">
+            <source src="media/hero-video.mp4" type="video/mp4">
+            Seu navegador não suporta a reprodução do vídeo de fundo.
+          </video>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    (function() {
+      var preloader = document.querySelector(".preloader");
+      var timeElement = document.querySelector(".time");
+
+      function hidePreloader() {
+        if (!preloader || preloader.classList.contains("is-hidden")) {
+          return;
+        }
+
+        preloader.classList.add("is-hidden");
+        window.setTimeout(function() {
+          preloader.setAttribute("hidden", "hidden");
+        }, 450);
+      }
+
+      function updateTime() {
+        if (!timeElement) {
+          return;
+        }
+
+        timeElement.textContent = new Intl.DateTimeFormat("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "America/Sao_Paulo"
+        }).format(new Date()) + " - São Paulo, Brasil";
+      }
+
+      if (document.readyState === "complete") {
+        hidePreloader();
+      } else {
+        window.addEventListener("load", hidePreloader, {
+          once: true
+        });
+        window.setTimeout(hidePreloader, 1800);
+      }
+
+      updateTime();
+      window.setInterval(updateTime, 60000);
+    })();
+  </script>
+</body>
+
+</html>

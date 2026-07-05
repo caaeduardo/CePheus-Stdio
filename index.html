@@ -83,7 +83,7 @@
           </div>
         </div>
         <div class="first-bottom">
-          <div class="first-time"><span class="time">00:00 - São Paulo, Brasil</span></div>
+          <div class="first-time"><time class="time" data-sao-paulo-time="hero" role="timer" aria-live="polite" aria-atomic="true">00:00:00 - São Paulo, Brasil</time></div>
           <div class="first-scroll-wrapper">
             <a href="#about" class="first-scroll" aria-label="Scroll down"><span>Role para baixo</span>
               <svg class="arrow" viewBox="0 0 16 16">
@@ -191,7 +191,7 @@
               <img src="images/Confident Professional.png" alt="">
             </figure>
             <figure class="strategy-media-item">
-              <img src="images/pexels-mateo-franciosi-283676800-36958065.jpg" alt="">
+              <img src="images/image 40 (1) 1 (1) 1 (1).png" alt="">
             </figure>
           </div>
           <div class="strategy-content">
@@ -399,7 +399,7 @@
           <div class="footer-col" data-footer-col="contact">
             <div class="footer-col-title">Contato</div>
             <div class="footer-item">
-              <a href="" class="desc" aria-label=""><span><span class="__cf_email__" data-cfemail="">[email protected]</span></span></a>
+              <a href="" class="desc" aria-label=""><span><span class=" data-cfemail="">[cepheusstdio@gmail.com]</span></span></a>
             </div>
            
           </div>
@@ -443,18 +443,16 @@
         </div>
         <div class="menu-bottom">
           <div class="menu-contacts">
+            
             <div class="menu-contacts-item">
-              <a href="" class="menu-contacts-link" aria-label="Email - CePheus Stdio"><span><span class="__cf_email__" data-cfemail="62010d0c160301162212100b0f074f071a0b16114c010d0f">[email protected]</span></span></a>
-            </div>
-            <div class="menu-contacts-item">
-              <a href="tel:+5511943676077" class="menu-contacts-link" aria-label=""><span>----</span></a>
+              <a href="tel:+5511943676077" class="menu-contacts-link" aria-label=""><span>Contato</span></a>
             </div>
           </div>
           <div class="menu-company-wrapper">
             <a class="menu-company desc" href="" target="_blank" aria-label=""><span></span></a>
           </div>
           <div class="menu-time desc">
-                Jundiaí, <span class="time">12:00 AM EST</span>
+                São Paulo, <time class="time" data-sao-paulo-time="menu" role="timer" aria-live="polite" aria-atomic="true">00:00:00 BRT</time>
           </div>
         </div>
       </div>
@@ -737,15 +735,139 @@
   <script id="hs-script-loader" async defer src="js/26916374.js"></script>
   <script>
     (function() {
+      var timeNodes = document.querySelectorAll("[data-sao-paulo-time]");
+      var TIME_ZONE = "America/Sao_Paulo";
+      var FALLBACK_OFFSET_HOURS = -3;
+      var VALIDATION_CASES = [
+        {
+          iso: "2018-02-17T15:00:00Z",
+          expected: "13:00:00"
+        },
+        {
+          iso: "2019-07-01T15:00:00Z",
+          expected: "12:00:00"
+        }
+      ];
+
+      if (!timeNodes.length) {
+        return;
+      }
+
+      function supportsTimeZoneFormatting() {
+        return typeof Intl === "object"
+          && typeof Intl.DateTimeFormat === "function"
+          && typeof Intl.DateTimeFormat("pt-BR", {
+            timeZone: TIME_ZONE
+          }).resolvedOptions === "function";
+      }
+
+      function getFallbackDate(date) {
+        var utcTimestamp = date.getTime() + (date.getTimezoneOffset() * 60000);
+        return new Date(utcTimestamp + (FALLBACK_OFFSET_HOURS * 3600000));
+      }
+
+      function createFormatter(options) {
+        return new Intl.DateTimeFormat("pt-BR", options);
+      }
+
+      var heroFormatter = supportsTimeZoneFormatting() ? createFormatter({
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+        timeZone: TIME_ZONE
+      }) : null;
+
+      var menuFormatter = supportsTimeZoneFormatting() ? createFormatter({
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+        timeZone: TIME_ZONE,
+        timeZoneName: "short"
+      }) : null;
+
+      function formatWithFallback(date, variant) {
+        var fallbackDate = getFallbackDate(date);
+        var time = String(fallbackDate.getHours()).padStart(2, "0")
+          + ":" + String(fallbackDate.getMinutes()).padStart(2, "0")
+          + ":" + String(fallbackDate.getSeconds()).padStart(2, "0");
+
+        return variant === "menu" ? time + " UTC-03" : time + " - São Paulo, Brasil";
+      }
+
+      function formatSaoPauloTime(date, variant) {
+        if (!heroFormatter || !menuFormatter) {
+          return formatWithFallback(date, variant);
+        }
+
+        return variant === "menu"
+          ? menuFormatter.format(date)
+          : heroFormatter.format(date) + " - São Paulo, Brasil";
+      }
+
+      function updateTimeLabels() {
+        var now = new Date();
+
+        timeNodes.forEach(function(node) {
+          var variant = node.getAttribute("data-sao-paulo-time");
+          node.textContent = formatSaoPauloTime(now, variant);
+          node.setAttribute("datetime", now.toISOString());
+          node.dataset.timezone = TIME_ZONE;
+        });
+      }
+
+      function validateTimeZoneCalculation() {
+        if (!heroFormatter) {
+          console.warn("[CePheus] Intl/timeZone indisponivel; usando fallback UTC-03.");
+          document.documentElement.setAttribute("data-sao-paulo-timezone", "fallback");
+          return false;
+        }
+
+        var validator = createFormatter({
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+          timeZone: TIME_ZONE
+        });
+
+        var isValid = VALIDATION_CASES.every(function(testCase) {
+          return validator.format(new Date(testCase.iso)) === testCase.expected;
+        });
+
+        document.documentElement.setAttribute(
+          "data-sao-paulo-timezone",
+          isValid ? "validated" : "invalid"
+        );
+
+        if (!isValid) {
+          console.warn("[CePheus] Validacao do fuso horario de Sao Paulo falhou.");
+        }
+
+        return isValid;
+      }
+
+      validateTimeZoneCalculation();
+      updateTimeLabels();
+      window.setInterval(updateTimeLabels, 1000);
+    })();
+  </script>
+  <script>
+    (function() {
       var quizForm = document.querySelector(".quizForm");
-      if (!quizForm || typeof window.fetch !== "function") {
+      var calcForm = document.querySelector(".calcForm");
+      var canUseFetch = typeof window.fetch === "function";
+      var THANK_YOU_STORAGE_KEY = "cepheusThankYouContext";
+      var FORM_ENDPOINT = "https://formsubmit.co/ajax/cepheusstdio@gmail.com";
+
+      if (!quizForm) {
         return;
       }
 
       var budgetCatalog = {
         "landing-page": {
           label: "Landing Page",
-          intro: "Projeto focado em captacao e conversao com alta performance.",
           packages: [
             {
               name: "Essencial",
@@ -773,13 +895,12 @@
               price: "Sob consulta",
               deadline: "Prazo sob consulta",
               description: "Escopo personalizado para campanhas, lancamentos e integracoes especiais.",
-              deliverables: "escopo customizado, integrações especiais, estrategia dedicada"
+              deliverables: "escopo customizado, integracoes especiais, estrategia dedicada"
             }
           ]
         },
         "institutional-site": {
           label: "Site Institucional",
-          intro: "Presenca digital completa para fortalecer autoridade e apresentar a empresa.",
           packages: [
             {
               name: "Start",
@@ -813,7 +934,6 @@
         },
         "football-club-site": {
           label: "Site de Clube de Futebol",
-          intro: "Estrutura digital para aproximar torcida, patrocinadores e comunicacao do clube.",
           packages: [
             {
               name: "Base da Torcida",
@@ -841,13 +961,12 @@
               price: "Sob consulta",
               deadline: "Prazo sob consulta",
               description: "Planejamento exclusivo para clubes, academias e projetos esportivos.",
-              deliverables: "escopo esportivo customizado, integrações, estrategia especial"
+              deliverables: "escopo esportivo customizado, integracoes, estrategia especial"
             }
           ]
         },
         other: {
           label: "Outro Projeto",
-          intro: "Analise consultiva para projetos especiais ou necessidades fora dos pacotes padrao.",
           packages: [
             {
               name: "Diagnostico",
@@ -868,7 +987,7 @@
               price: "R$ 6.100 a R$ 12.000",
               deadline: "30 a 60 dias",
               description: "Estrutura mais robusta para operacoes com varias necessidades funcionais.",
-              deliverables: "fluxos completos, automacoes, integrações, monitoramento"
+              deliverables: "fluxos completos, automacoes, integracoes, monitoramento"
             },
             {
               name: "Sob medida",
@@ -881,6 +1000,13 @@
         }
       };
 
+      var calculatorCatalog = {
+        "Landing Page": { min: 1490, max: 2490, pageExtra: 180, featureExtra: 260, deadlineBase: 7, deadlineMax: 15 },
+        "Site Institucional": { min: 2900, max: 4900, pageExtra: 350, featureExtra: 480, deadlineBase: 15, deadlineMax: 30 },
+        "Site de Clube de Futebol": { min: 4500, max: 7500, pageExtra: 420, featureExtra: 550, deadlineBase: 20, deadlineMax: 40 },
+        "Outro Projeto": { min: 1200, max: 2000, pageExtra: 300, featureExtra: 400, deadlineBase: 5, deadlineMax: 10 }
+      };
+
       var quizTitleSteps = quizForm.querySelectorAll(".quiz__challenge-title > div");
       var serviceRadios = quizForm.querySelectorAll('input[name="Tipo de Servico"]');
       var packageRadios = quizForm.querySelectorAll('input[name="Tipo de Pacote"]');
@@ -891,7 +1017,128 @@
       var companyPhoneField = quizForm.querySelector("#age");
       var finalPhoneField = quizForm.querySelector("#phoneNumbers");
       var finalPhoneHidden = quizForm.querySelector("#phone");
-      var submitButton = quizForm.querySelector('button[type="submit"] span');
+      var quizSubmitButton = quizForm.querySelector('button[type="submit"] span');
+
+      var calcBusinessType = calcForm ? calcForm.querySelector("#businessType") : null;
+      var calcPagesField = calcForm ? calcForm.querySelector("#calcRevenue") : null;
+      var calcExtrasField = calcForm ? calcForm.querySelector("#calcProfit") : null;
+      var calcFirstnameField = calcForm ? calcForm.querySelector("#calcFirstname") : null;
+      var calcEmailField = calcForm ? calcForm.querySelector("#calcEmail") : null;
+      var calcPhoneNumbersField = calcForm ? calcForm.querySelector("#calcPhoneNumbers") : null;
+      var calcPhoneHiddenField = calcForm ? calcForm.querySelector("#calcPhone") : null;
+      var calcAmount = calcForm ? calcForm.querySelector(".calc-amount") : null;
+      var calcDescription = calcForm ? calcForm.querySelector(".calc-result .desc-large") : null;
+      var approximateValueField = calcForm ? calcForm.querySelector("#approximateValue") : null;
+      var calcSubmitButton = calcForm ? calcForm.querySelector('button[type="submit"] span') : null;
+
+      function formatCurrency(value) {
+        return new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }).format(value);
+      }
+
+      function buildTimestamp() {
+        return new Date().toLocaleString("pt-BR");
+      }
+
+      function persistThankYouContext(context) {
+        try {
+          window.sessionStorage.setItem(THANK_YOU_STORAGE_KEY, JSON.stringify(context));
+        } catch (error) {
+        }
+      }
+
+      function redirectToThankYou(context) {
+        var params = new URLSearchParams();
+        params.set("source", context.source || "");
+        params.set("service", context.service || "");
+        params.set("package", context.package || "");
+        params.set("email", context.email || "");
+        params.set("phone", context.phone || "");
+        params.set("company", context.company || "");
+        params.set("estimate", context.estimate || "");
+        params.set("deadline", context.deadline || "");
+        params.set("sentAt", context.sentAt || buildTimestamp());
+        window.location.href = "./thankyou.html?" + params.toString();
+      }
+
+      function buildEmailBody(payload, source) {
+        var lines = [
+          "Novo pedido de contato - CePheus Stdio",
+          "",
+          "Origem do envio: " + source,
+          "Servico: " + (payload.servico || "Nao informado"),
+          "Pacote: " + (payload.pacote || "Nao informado"),
+          "Faixa de investimento: " + (payload.valor || "Nao informado"),
+          "Prazo estimado: " + (payload.prazo || "Nao informado"),
+          "Descricao do pacote: " + (payload.descricao || "Nao informado"),
+          "Entregas previstas: " + (payload.entregas || "Nao informado"),
+          "",
+          "Nome do solicitante: " + (payload.nomeSolicitante || "Nao informado"),
+          "Empresa: " + (payload.empresa || "Nao informado"),
+          "WhatsApp da empresa: " + (payload.whatsAppEmpresa || "Nao informado"),
+          "Objetivo do projeto: " + (payload.objetivo || "Nao informado"),
+          "Site atual ou referencia: " + (payload.referencia || "Nao informado"),
+          "Informacoes adicionais: " + (payload.informacoes || "Nao informado"),
+          "",
+          "Responsavel final: " + (payload.responsavel || "Nao informado"),
+          "E-mail: " + (payload.email || "Nao informado"),
+          "Telefone final: " + (payload.telefoneFinal || "Nao informado")
+        ];
+
+        return lines.join("\n");
+      }
+
+      async function sendBudgetEmail(payload, source) {
+        var formData = new FormData();
+        formData.append("_subject", "[CePheus Stdio] " + source + " - " + (payload.servico || "Contato") + " / " + (payload.pacote || "Sem pacote"));
+        formData.append("_template", "table");
+        formData.append("_captcha", "false");
+        formData.append("Origem do Envio", source);
+        formData.append("Servico", payload.servico || "");
+        formData.append("Pacote", payload.pacote || "");
+        formData.append("Faixa de Investimento", payload.valor || "");
+        formData.append("Prazo Estimado", payload.prazo || "");
+        formData.append("Descricao do Pacote", payload.descricao || "");
+        formData.append("Entregas Previstas", payload.entregas || "");
+        formData.append("Nome do Solicitante", payload.nomeSolicitante || "");
+        formData.append("Empresa", payload.empresa || "");
+        formData.append("WhatsApp da Empresa", payload.whatsAppEmpresa || "");
+        formData.append("Objetivo do Projeto", payload.objetivo || "");
+        formData.append("Site Atual ou Referencia", payload.referencia || "");
+        formData.append("Informacoes Adicionais", payload.informacoes || "");
+        formData.append("Responsavel", payload.responsavel || "");
+        formData.append("Email", payload.email || "");
+        formData.append("Telefone Final", payload.telefoneFinal || "");
+        formData.append("Resumo Completo", buildEmailBody(payload, source));
+
+        if (!canUseFetch) {
+          throw new Error("Fetch indisponivel");
+        }
+
+        return fetch(FORM_ENDPOINT, {
+          method: "POST",
+          headers: {
+            Accept: "application/json"
+          },
+          body: formData
+        }).then(function(response) {
+          if (!response.ok) {
+            throw new Error("Falha no envio");
+          }
+
+          return response.json();
+        });
+      }
+
+      function fallbackToMailto(payload, source) {
+        var subject = "[CePheus Stdio] " + source + " - " + (payload.servico || "Contato") + " / " + (payload.pacote || "Sem pacote");
+        var body = buildEmailBody(payload, source);
+        window.location.href = "mailto:cepheusstdio@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+      }
 
       function getSelectedServiceKey() {
         var selected = quizForm.querySelector('input[name="Tipo de Servico"]:checked');
@@ -941,9 +1188,17 @@
           quizTitleSteps[3].innerHTML = 'Compartilhe os <span class="text-gradient">detalhes</span> do projeto de ' + service.label;
         }
 
-        objectiveLabel.textContent = "Objetivo principal do projeto";
-        referenceLabel.textContent = "Site atual ou referencia";
-        notesLabel.textContent = "Informacoes adicionais";
+        if (objectiveLabel) {
+          objectiveLabel.textContent = "Objetivo principal do projeto";
+        }
+
+        if (referenceLabel) {
+          referenceLabel.textContent = "Site atual ou referencia";
+        }
+
+        if (notesLabel) {
+          notesLabel.textContent = "Informacoes adicionais";
+        }
       }
 
       function updateDynamicLabels() {
@@ -977,28 +1232,10 @@
         }
       }
 
-      function buildEmailBody(payload) {
-        return [
-          "Novo pedido de orcamento - CePheus Stdio",
-          "",
-          "Servico: " + payload.servico,
-          "Pacote: " + payload.pacote,
-          "Faixa de investimento: " + payload.valor,
-          "Prazo estimado: " + payload.prazo,
-          "Descricao do pacote: " + payload.descricao,
-          "Entregas previstas: " + payload.entregas,
-          "",
-          "Nome do solicitante: " + payload.nomeSolicitante,
-          "Empresa: " + payload.empresa,
-          "WhatsApp da empresa: " + payload.whatsAppEmpresa,
-          "Objetivo do projeto: " + payload.objetivo,
-          "Site atual ou referencia: " + payload.referencia,
-          "Informacoes adicionais: " + payload.informacoes,
-          "",
-          "Responsavel final: " + payload.responsavel,
-          "E-mail: " + payload.email,
-          "Telefone final: " + payload.telefoneFinal
-        ].join("\n");
+      function normalizeCalcPhoneInput() {
+        if (calcPhoneHiddenField && calcPhoneNumbersField) {
+          calcPhoneHiddenField.value = calcPhoneNumbersField.value.trim();
+        }
       }
 
       function getQuizPayload() {
@@ -1028,47 +1265,113 @@
         };
       }
 
-      async function sendBudgetEmail(payload) {
-        var formData = new FormData();
-        formData.append("_subject", "[CePheus Stdio] Orcamento - " + payload.servico + " / " + payload.pacote);
-        formData.append("_template", "table");
-        formData.append("_captcha", "false");
-        formData.append("Servico", payload.servico);
-        formData.append("Pacote", payload.pacote);
-        formData.append("Faixa de Investimento", payload.valor);
-        formData.append("Prazo Estimado", payload.prazo);
-        formData.append("Descricao do Pacote", payload.descricao);
-        formData.append("Entregas Previstas", payload.entregas);
-        formData.append("Nome do Solicitante", payload.nomeSolicitante);
-        formData.append("Empresa", payload.empresa);
-        formData.append("WhatsApp da Empresa", payload.whatsAppEmpresa);
-        formData.append("Objetivo do Projeto", payload.objetivo);
-        formData.append("Site Atual ou Referencia", payload.referencia);
-        formData.append("Informacoes Adicionais", payload.informacoes);
-        formData.append("Responsavel", payload.responsavel);
-        formData.append("Email", payload.email);
-        formData.append("Telefone Final", payload.telefoneFinal);
-        formData.append("Resumo Completo", buildEmailBody(payload));
-
-        var response = await fetch("https://formsubmit.co/ajax/cepheusstdio@gmail.com", {
-          method: "POST",
-          headers: {
-            Accept: "application/json"
-          },
-          body: formData
-        });
-
-        if (!response.ok) {
-          throw new Error("Falha no envio");
-        }
-
-        return response.json();
+      function parseQuantity(value) {
+        var numeric = String(value || "").replace(/[^\d]/g, "");
+        return numeric ? Math.max(0, parseInt(numeric, 10)) : 0;
       }
 
-      function fallbackToMailto(payload) {
-        var subject = "[CePheus Stdio] Orcamento - " + payload.servico + " / " + payload.pacote;
-        var body = buildEmailBody(payload);
-        window.location.href = "mailto:cepheusstdio@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+      function calculateEstimate() {
+        var service = calcBusinessType ? calcBusinessType.value : "";
+        var pricing = calculatorCatalog[service];
+        var pages = parseQuantity(calcPagesField ? calcPagesField.value : "");
+        var extras = parseQuantity(calcExtrasField ? calcExtrasField.value : "");
+        var min;
+        var max;
+        var deadlineMin;
+        var deadlineMax;
+
+        if (!pricing) {
+          return null;
+        }
+
+        min = pricing.min + Math.max(0, pages - 1) * pricing.pageExtra + extras * pricing.featureExtra;
+        max = pricing.max + Math.max(0, pages - 1) * (pricing.pageExtra + 120) + extras * (pricing.featureExtra + 160);
+        deadlineMin = pricing.deadlineBase + Math.min(pages, 10);
+        deadlineMax = pricing.deadlineMax + Math.min(extras * 2, 20);
+
+        return {
+          estimate: formatCurrency(min) + " a " + formatCurrency(max),
+          deadline: deadlineMin + " a " + deadlineMax + " dias",
+          pages: pages,
+          extras: extras
+        };
+      }
+
+      function updateCalculatorEstimate() {
+        var result = calculateEstimate();
+
+        if (!result) {
+          return null;
+        }
+
+        if (calcAmount) {
+          calcAmount.textContent = result.estimate;
+        }
+
+        if (approximateValueField) {
+          approximateValueField.value = result.estimate;
+          approximateValueField.setAttribute("data-deadline", result.deadline);
+        }
+
+        if (calcDescription) {
+          calcDescription.textContent = "Estimativa baseada no tipo de servico selecionado, quantidade de paginas (" + result.pages + ") e funcionalidades extras (" + result.extras + "). Prazo previsto: " + result.deadline + ".";
+        }
+
+        return result;
+      }
+
+      function getCalculatorPayload() {
+        var result = updateCalculatorEstimate();
+        var service = calcBusinessType ? calcBusinessType.value : "";
+        if (!result || !service) {
+          return null;
+        }
+
+        return {
+          servico: service,
+          pacote: "Simulacao personalizada",
+          valor: result.estimate,
+          prazo: result.deadline,
+          descricao: "Simulacao inicial baseada no formulario de estimativa.",
+          entregas: "Quantidade estimada de paginas: " + result.pages + " | Funcionalidades extras: " + result.extras,
+          nomeSolicitante: calcFirstnameField ? calcFirstnameField.value.trim() : "",
+          empresa: "",
+          whatsAppEmpresa: "",
+          objetivo: "Solicitacao vinda do simulador de orcamento.",
+          referencia: "",
+          informacoes: "Paginas estimadas: " + result.pages + " | Funcionalidades extras: " + result.extras,
+          responsavel: calcFirstnameField ? calcFirstnameField.value.trim() : "",
+          email: calcEmailField ? calcEmailField.value.trim() : "",
+          telefoneFinal: calcPhoneNumbersField ? calcPhoneNumbersField.value.trim() : ""
+        };
+      }
+
+      function buildThankYouContext(payload, source) {
+        return {
+          source: source,
+          service: payload.servico || "",
+          package: payload.pacote || "",
+          email: payload.email || "",
+          phone: payload.telefoneFinal || "",
+          company: payload.empresa || "",
+          estimate: payload.valor || "",
+          deadline: payload.prazo || "",
+          sentAt: buildTimestamp()
+        };
+      }
+
+      function handleSuccessfulSubmission(form, payload, source, buttonNode, defaultButtonText, resetCallback) {
+        var context = buildThankYouContext(payload, source);
+        persistThankYouContext(context);
+        if (typeof resetCallback === "function") {
+          resetCallback();
+        } else if (form) {
+          form.reset();
+        }
+        if (buttonNode) {
+          buttonNode.textContent = defaultButtonText;
+        }
+        redirectToThankYou(context);
       }
 
       serviceRadios.forEach(function(radio) {
@@ -1094,6 +1397,22 @@
         });
       }
 
+      if (calcPhoneNumbersField) {
+        calcPhoneNumbersField.addEventListener("input", normalizeCalcPhoneInput);
+      }
+
+      if (calcBusinessType) {
+        calcBusinessType.addEventListener("change", updateCalculatorEstimate);
+      }
+
+      if (calcPagesField) {
+        calcPagesField.addEventListener("input", updateCalculatorEstimate);
+      }
+
+      if (calcExtrasField) {
+        calcExtrasField.addEventListener("input", updateCalculatorEstimate);
+      }
+
       quizForm.addEventListener("submit", async function(event) {
         var payload;
 
@@ -1106,25 +1425,67 @@
           return;
         }
 
-        if (submitButton) {
-          submitButton.textContent = "Enviando...";
+        if (quizSubmitButton) {
+          quizSubmitButton.textContent = "Enviando...";
         }
 
         try {
-          await sendBudgetEmail(payload);
-          quizForm.reset();
-          updatePackageCards("landing-page");
-          if (submitButton) {
-            submitButton.textContent = "Enviar orcamento";
-          }
-          window.alert("Orcamento enviado com sucesso para cepheusstdio@gmail.com.");
+          await sendBudgetEmail(payload, "Formulario principal");
+          handleSuccessfulSubmission(quizForm, payload, "quiz", quizSubmitButton, "Enviar orcamento", function() {
+            quizForm.reset();
+            updatePackageCards("landing-page");
+          });
         } catch (error) {
-          if (submitButton) {
-            submitButton.textContent = "Enviar orcamento";
+          if (quizSubmitButton) {
+            quizSubmitButton.textContent = "Enviar orcamento";
           }
-          fallbackToMailto(payload);
+          fallbackToMailto(payload, "Formulario principal");
         }
       });
+
+      if (calcForm) {
+        calcForm.addEventListener("submit", async function(event) {
+          var payload;
+
+          event.preventDefault();
+          normalizeCalcPhoneInput();
+          payload = getCalculatorPayload();
+
+          if (!payload) {
+            window.alert("Selecione o tipo de servico e informe os dados do simulador antes de enviar.");
+            return;
+          }
+
+          if (calcSubmitButton) {
+            calcSubmitButton.textContent = "Enviando...";
+          }
+
+          try {
+            await sendBudgetEmail(payload, "Simulador");
+            handleSuccessfulSubmission(calcForm, payload, "calculator", calcSubmitButton, "Receber proposta", function() {
+              calcForm.reset();
+              if (calcAmount) {
+                calcAmount.textContent = "R$ 0,00";
+              }
+              if (calcDescription) {
+                calcDescription.textContent = "A estimativa considera o tipo de servico, o numero de paginas e as funcionalidades adicionais informadas.";
+              }
+              if (approximateValueField) {
+                approximateValueField.value = "";
+                approximateValueField.removeAttribute("data-deadline");
+              }
+            });
+          } catch (error) {
+            if (calcSubmitButton) {
+              calcSubmitButton.textContent = "Receber proposta";
+            }
+            fallbackToMailto(payload, "Simulador");
+          }
+        });
+      }
+
+      updatePackageCards("landing-page");
+      updateCalculatorEstimate();
     })();
   </script>
 </body>
