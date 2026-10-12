@@ -237,7 +237,7 @@
           </div>
         </div>
         <div class="first-bottom" aria-label="Informações adicionais da página">
-          <div class="first-time"><span class="time">00:00 - São Paulo, Brasil</span></div>
+          <div class="first-time"><span class="time">00:00:00 - São Paulo, Brasil</span></div>
           <div class="first-scroll-wrapper">
             <a href="index.html#first" class="first-scroll" aria-label="Voltar para a página inicial">
               <span>Página inicial</span>
@@ -281,6 +281,7 @@
         timeElement.textContent = new Intl.DateTimeFormat("pt-BR", {
           hour: "2-digit",
           minute: "2-digit",
+          second: "2-digit",
           timeZone: "America/Sao_Paulo"
         }).format(new Date()) + " - São Paulo, Brasil";
       }
@@ -295,7 +296,7 @@
       }
 
       updateTime();
-      window.setInterval(updateTime, 60000);
+      window.setInterval(updateTime, 1000);
     })();
   </script>
 </body>

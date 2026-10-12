@@ -735,7 +735,7 @@
   <script id="hs-script-loader" async defer src="js/26916374.js"></script>
   <script>
     (function() {
-      var timeNodes = document.querySelectorAll("[data-sao-paulo-time]");
+      var timeNodes = document.querySelectorAll("[data-sao-paulo-time], .first-time .time, .menu-time .time, .time");
       var TIME_ZONE = "America/Sao_Paulo";
       var FALLBACK_OFFSET_HOURS = -3;
       var VALIDATION_CASES = [
@@ -810,7 +810,7 @@
         var now = new Date();
 
         timeNodes.forEach(function(node) {
-          var variant = node.getAttribute("data-sao-paulo-time");
+          var variant = node.getAttribute("data-sao-paulo-time") || (node.closest && node.closest(".menu-time") ? "menu" : "hero");
           node.textContent = formatSaoPauloTime(now, variant);
           node.setAttribute("datetime", now.toISOString());
           node.dataset.timezone = TIME_ZONE;
